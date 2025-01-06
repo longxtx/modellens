@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.7.2",
+    "element-plus": "^2.9.2",
     "fsevents": "^2.3.3",
     "highlight.js": "^11.9.0",
+    "markdown-it": "^14.1.0",
     "marked": "^12.0.0",
     "mqtt": "^5.3.5",
     "pinia": "^2.1.7",

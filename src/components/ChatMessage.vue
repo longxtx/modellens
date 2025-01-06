@@ -4,7 +4,8 @@ import { onMounted } from 'vue';
 import { useAutoScroll } from '../composables/useAutoScroll';
 import { useMarkdown } from '../composables/useMarkdown';
 import AudioMessage from './AudioMessage.vue';
-
+import MarkdownIt from 'markdown-it';
+const md = new MarkdownIt();
 const props = defineProps({
   message: {
     type: Object,
@@ -14,6 +15,11 @@ const props = defineProps({
 
 const { scrollToBottom } = useAutoScroll();
 const { renderContent } = useMarkdown();
+
+function isMarkdown(content) {
+  const html = md.render(content);
+  return html !== `<p>${content}</p>`;
+}
 
 onMounted(() => {
   const messagesContainer = document.querySelector('.messages-container');
@@ -28,12 +34,12 @@ onMounted(() => {
     </div>
     <div :class="['message-content', message.type === 'user' ? 'content-right' : 'content-left']">
       <template v-if="message.contentType === 'text'">
-        <div v-html="renderContent(message.content)" class="markdown-content"></div>
+        <div v-html="renderContent(message.content)" :class="['markdown-content', isMarkdown(message.content) ? 'markdown-left-align' : '']"></div>
       </template>
       <template v-else-if="message.contentType === 'image_with_text'">
         <div class="image-with-text">
           <img :src="message.content.image" alt="Uploaded image" class="message-image" />
-          <div v-if="message.content.text" v-html="renderContent(message.content.text)" class="markdown-content"></div>
+          <div v-if="message.content.text" v-html="renderContent(message.content.text)" :class="['markdown-content', isMarkdown(message.content.text) ? 'markdown-left-align' : '']"></div>
         </div>
       </template>
       <template v-else-if="message.contentType === 'image'">
@@ -145,5 +151,8 @@ onMounted(() => {
 
 .message-user .image-with-text {
   align-items: flex-end;
+}
+.markdown-left-align {
+  text-align: left;
 }
 </style>

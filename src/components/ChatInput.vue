@@ -1,7 +1,8 @@
 `<script setup>
 import { computed, ref } from 'vue';
 import { useAudioRecording } from '../composables/useAudioRecording';
-
+import AudioRecorderButton from '../components/AudioRecorderButton.vue';
+import { ElMessage } from 'element-plus';
 
 const emit = defineEmits(['send-message']);
 const message = ref('');
@@ -65,43 +66,14 @@ const handleFileUpload = (event) => {
   event.target.value = '';
 };
 
-const handleRecordStart = async () => {
-  try {
-    await startRecording();
-    timerRef.value.startTimer();
-  } catch (error) {
-    console.error('Recording failed:', error);
-    alert('Failed to start recording. Please check your microphone permissions.');
-  }
-};
-const startRecording2 = () => {
-  console.log('startRecording');
-  // store.startRecording();
-};
-const stopRecording2 = () => {
-  console.log('stopRecording');
-  // store.stopRecording();
-};
-
-const handleRecordStop = async () => {
-  const audioUrl = await stopRecording();
-  if (audioUrl) {
-    const duration = timerRef.value.stopTimer();
-    emit('send-message', {
-      type: 'user',
-      contentType: 'audio',
-      content: audioUrl,
-      duration,
-      timestamp: Date.now()
-    });
-  }
-};
-
 const toggleInputMode = () => {
-  isVoiceMode.value = !isVoiceMode.value;
-  if (isRecording.value) {
-    handleRecordStop();
-  }
+  ElMessage.info('语音功能暂未实现');
+  console.log('语音功能暂未实现');
+  return;
+  // isVoiceMode.value = !isVoiceMode.value;
+  // if (isRecording.value) {
+
+  // }
 };
 
 const removeImage = () => {
@@ -152,29 +124,7 @@ const removeImage = () => {
 
     <div v-else class="voice-input-container">
      <div class="voice-record-wrapper">
-         <button
-          class="voice-record-btn"
-          @mousedown="handleRecordStart"
-          @mouseup="handleRecordStop"
-          @mouseleave="handleRecordStop"
-          :class="{ 'recording': isRecording }"
-        >
-          {{ isRecording ? 'Recording... Release to send' : 'Hold to speak' }}
-        </button>
-        <RecordingTimer 
-          ref="timerRef"
-          :is-recording="isRecording" 
-        />
-        <!-- <button
-          class="record-button"
-          :class="{ 'recording': isRecording, 'disabled': isPlaying }"
-          @mousedown="startRecording2"
-          @mouseup="stopRecording2"
-          @mouseleave="stopRecording2"
-          :disabled="isPlaying"
-        >
-          {{ buttonText }}
-        </button> -->
+        <AudioRecorderButton @start-recording="startRecording" @stop-recording="stopRecording" @send-audio="sendMessage" />
       </div> 
       
       <div class="input-actions">
@@ -199,7 +149,6 @@ const removeImage = () => {
 }
 
 .text-input-container{
-
   border: 1px solid #e5e7eb;
   border-radius: 0.375rem;
   display: flex;

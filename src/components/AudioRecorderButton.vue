@@ -1,11 +1,11 @@
 `<template>
   <button
     class="record-button"
-    :class="{ 'recording': isRecording, 'disabled': isPlaying }"
+    :class="{ 'recording': uar.isRecording, 'disabled': uar.isPlaying }"
     @mousedown="startRecording"
     @mouseup="stopRecording"
     @mouseleave="stopRecording"
-    :disabled="isPlaying"
+    :disabled="uar.isPlaying"
   >
     {{ buttonText }}
   </button>
@@ -13,27 +13,24 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useAudioRecording } from '../composables/useAudioRecording'; // 添加: 引入 useAudioRecording
+import { useAudioRecording } from '../composables/useAudioRecording';
 
-// 查询当前浏览器支持的音频格式
-const Formats = AudioRecorder.getSupportedFormats();
-const store = useAudioStore();
-
-const { isPlaying } = useAudioRecording(); // 添加: 使用 useAudioRecording
+const uar = useAudioRecording();
 
 const buttonText = computed(() => {
-  if (isPlaying) return '正在播放...'; // 修改: 使用 isPlaying 从 useAudioRecording
-  return store.isRecording ? '录音中...' : '按住说话';
+  if (uar.isPlaying) return '正在播放...';
+  return uar.isRecording.value ? '录音中...' : '按住说话';
 });
 
 const startRecording = () => {
   console.log('startRecording');
-  store.startRecording();
+  uar.recOpen(); 
+  uar.startRecording();
 };
 
 const stopRecording = () => {
   console.log('stopRecording');
-  store.stopRecording();
+  uar.stopRecording();
 };
 </script>
 
